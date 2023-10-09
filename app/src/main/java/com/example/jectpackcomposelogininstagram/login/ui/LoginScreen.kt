@@ -1,4 +1,4 @@
-package com.example.jectpackcomposelogininstagram
+package com.example.jectpackcomposelogininstagram.login.ui
 
 import android.app.Activity
 import androidx.compose.foundation.Image
@@ -30,9 +30,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,9 +45,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.jectpackcomposelogininstagram.R
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(loginViewModel: LoginViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -55,7 +56,7 @@ fun LoginScreen() {
     ) {
         // Le pasamos el modificador del padre
         Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center))
+        Body(Modifier.align(Alignment.Center), loginViewModel)
         Footer(Modifier.align(Alignment.BottomCenter))
     }
 
@@ -91,16 +92,16 @@ fun SignUp() {
 }
 
 @Composable
-fun Body(modifier: Modifier) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var isLoginEnable by rememberSaveable { mutableStateOf(false) }
+fun Body(modifier: Modifier, loginViewModel: LoginViewModel) {
+    val email: String by loginViewModel.email.observeAsState(initial = "")
+    val password: String by loginViewModel.password.observeAsState(initial = "")
+    val isLoginEnable: Boolean by loginViewModel.isLoginEnable.observeAsState(initial = false)
     Column(modifier = modifier) {
         ImageLogo(Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.size(16.dp))
-        TextFieldEmail(email) { email = it }
+        Email(email) { loginViewModel.onLoginChanged(email = it, password = password) }
         Spacer(modifier = Modifier.size(4.dp))
-        TextFieldPassword(password) { password = it }
+        Password(password) { loginViewModel.onLoginChanged(email = email, password = it) }
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.size(16.dp))
@@ -192,7 +193,7 @@ fun ForgotPassword(modifier: Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextFieldPassword(password: String, onTextChanged: (String) -> Unit) {
+fun Password(password: String, onTextChanged: (String) -> Unit) {
     var passwordVisibility by remember { mutableStateOf(false) }
     TextField(
         value = password,
@@ -228,7 +229,7 @@ fun TextFieldPassword(password: String, onTextChanged: (String) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextFieldEmail(email: String, onTextChanged: (String) -> Unit) {
+fun Email(email: String, onTextChanged: (String) -> Unit) {
     TextField(
         value = email,
         onValueChange = { onTextChanged(it) },
@@ -249,7 +250,7 @@ fun TextFieldEmail(email: String, onTextChanged: (String) -> Unit) {
 @Composable
 fun ImageLogo(modifier: Modifier) {
     Image(
-        painter = painterResource(id = R.drawable.insta),
+        painter = painterResource(id = R.drawable.insta_copia),
         contentDescription = "instagram",
         modifier = modifier
     )
