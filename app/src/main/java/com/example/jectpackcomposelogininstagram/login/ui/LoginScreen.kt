@@ -250,7 +250,7 @@ fun Email(email: String, onTextChanged: (String) -> Unit) {
 @Composable
 fun ImageLogo(modifier: Modifier) {
     Image(
-        painter = painterResource(id = R.drawable.insta_copia),
+        painter = painterResource(id = R.drawable.insta),
         contentDescription = "instagram",
         modifier = modifier
     )
